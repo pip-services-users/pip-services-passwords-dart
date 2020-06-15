@@ -12,6 +12,7 @@ class ActivitiesConnector {
           'Activities client was not found. Logging password activities is disabled');
     }
     _activitiesClient = activitiesClient;
+    _logger = logger;
   }
 
   IActivitiesClientV1 _activitiesClient;
@@ -31,16 +32,16 @@ class ActivitiesConnector {
     }
   }
 
-  void logSigninActivity(correlationId, userId) {
+  void logSigninActivity(String correlationId, String userId) {
     _logActivity(correlationId, userId, PasswordActivityTypeV1.Signin);
   }
 
-  void logPasswordRecoveredActivity(correlationId, userId) {
+  void logPasswordRecoveredActivity(String correlationId, String userId) {
     _logActivity(
         correlationId, userId, PasswordActivityTypeV1.PasswordRecovered);
   }
 
-  void logPasswordChangedActivity(correlationId, userId) {
+  void logPasswordChangedActivity(String correlationId, String userId) {
     _logActivity(correlationId, userId, PasswordActivityTypeV1.PasswordChanged);
   }
 }

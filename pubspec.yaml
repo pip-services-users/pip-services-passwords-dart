@@ -1,0 +1,26 @@
+name: pip_services_passwords
+version: "1.0.0"
+description: Passwords microservice for Pip.Services in Dart. This microservice sets user passwords and authenticate, changes passwords, resets and recovers passwords via emails.
+homepage: https://github.com/pip-services-users/pip-services-passwords-dart
+
+environment:
+  sdk: '>=2.0.0 <3.0.0'
+
+dependencies:
+  pip_services3_commons: ^1.0.9
+  pip_services3_components: ^1.0.6
+  pip_services3_container: ">=1.0.3 <2.0.0"
+  pip_services3_rpc: ^1.0.3
+  pip_services3_grpc: ^1.0.0
+  pip_services3_data: ^1.0.5
+  pip_services3_mongodb: ^1.0.4
+  pip_clients_activities: ^1.0.0
+  pip_services_activities: ^1.0.0 
+  #pip_clients_msgdistribution: ^1.0.0
+  #pip_services_msgdistribution: ^1.0.0
+  http: "^0.12.0"
+  angel_framework: ^2.1.1
+  crypto: ^2.1.5
+
+dev_dependencies:
+  test: '>=1.14.2 <2.0.0'
