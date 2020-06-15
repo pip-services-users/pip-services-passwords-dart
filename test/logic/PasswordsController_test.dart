@@ -1,3 +1,4 @@
+import 'package:pip_clients_msgdistribution/pip_clients_msgdistribution.dart';
 import 'package:pip_services3_components/pip_services3_components.dart';
 import 'package:pip_services_passwords/pip_services_passwords.dart';
 import 'package:test/test.dart';
@@ -28,7 +29,9 @@ void main() {
         Descriptor('pip-services-passwords', 'controller', 'default', 'default',
             '1.0'),
         controller,
-        //Descriptor('pip-services-msgdistribution', 'client', 'null', 'default', '1.0'), MessageDistributionNullClientV1()
+        Descriptor(
+            'pip-services-msgdistribution', 'client', 'null', 'default', '1.0'),
+        MessageDistributionNullClientV1()
       ]);
 
       controller.setReferences(references);

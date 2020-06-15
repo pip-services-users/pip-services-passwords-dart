@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
+import 'package:pip_clients_msgdistribution/pip_clients_msgdistribution.dart';
 import 'package:pip_services3_commons/pip_services3_commons.dart';
 import 'package:pip_services3_components/pip_services3_components.dart';
 import 'package:pip_clients_activities/pip_clients_activities.dart';
@@ -45,12 +46,12 @@ class PasswordsController
 
   DependencyResolver dependencyResolver =
       DependencyResolver(PasswordsController._defaultConfig);
-  //MessageResolverV1 _messageResolver = MessageResolverV1();
+  final MessageResolverV1 _messageResolver = MessageResolverV1();
   final CompositeLogger _logger = CompositeLogger();
   IPasswordsPersistence _persistence;
   IActivitiesClientV1 _activitiesClient;
   ActivitiesConnector _activitiesConnector;
-  //IMessageDistributionClientV1 _messageDistributionClient;
+  IMessageDistributionClientV1 _messageDistributionClient;
   MessageConnector _messageConnector;
   PasswordsCommandSet commandSet;
 
@@ -68,7 +69,7 @@ class PasswordsController
   void configure(ConfigParams config) {
     config = config.setDefaults(PasswordsController._defaultConfig);
     dependencyResolver.configure(config);
-    //_messageResolver.configure(config);
+    _messageResolver.configure(config);
 
     _lockTimeout =
         config.getAsIntegerWithDefault('options.lock_timeout', _lockTimeout);
@@ -95,10 +96,12 @@ class PasswordsController
         dependencyResolver.getOneRequired<IPasswordsPersistence>('persistence');
     _activitiesClient =
         dependencyResolver.getOneOptional<IActivitiesClientV1>('activities');
-    //_messageDistributionClient = _dependencyResolver.getOneOptional<IMessageDistributionClientV1>('msgdistribution');
+    _messageDistributionClient = dependencyResolver
+        .getOneOptional<IMessageDistributionClientV1>('msgdistribution');
 
     _activitiesConnector = ActivitiesConnector(_logger, _activitiesClient);
-    //_messageConnector = MessageConnector(_logger, _messageResolver, _messageDistributionClient);
+    _messageConnector =
+        MessageConnector(_logger, _messageResolver, _messageDistributionClient);
   }
 
   /// Gets a command set.
@@ -291,7 +294,7 @@ class PasswordsController
 
         if (userPassword.fail_count >= _attemptCount) {
           userPassword.locked = true;
-          // _messageConnector.sendAccountLockedEmail(correlationId, userId);
+          _messageConnector.sendAccountLockedEmail(correlationId, userId);
           err = BadRequestException(
                   correlationId,
                   'ACCOUNT_LOCKED',
@@ -386,7 +389,7 @@ class PasswordsController
     await _persistence.update(correlationId, userPassword);
     // Asynchronous post-processing
     _activitiesConnector.logPasswordChangedActivity(correlationId, userId);
-    // _messageConnector.sendPasswordChangedEmail(correlationId, userId);
+    _messageConnector.sendPasswordChangedEmail(correlationId, userId);
   }
 
   /// Validates a code.
@@ -467,7 +470,7 @@ class PasswordsController
     await _persistence.update(correlationId, userPassword);
     // Asynchronous post-processing
     _activitiesConnector.logPasswordChangedActivity(correlationId, userId);
-    // _messageConnector.sendPasswordChangedEmail(correlationId, userId);
+    _messageConnector.sendPasswordChangedEmail(correlationId, userId);
   }
 
   /// Recovers a password.
@@ -499,7 +502,7 @@ class PasswordsController
     await _persistence.update(correlationId, userPassword);
     // Asynchronous post-processing
     _activitiesConnector.logPasswordRecoveredActivity(correlationId, userId);
-    // _messageConnector.sendRecoverPasswordEmail(
-    //     correlationId, userId, userPassword.rec_code);
+    _messageConnector.sendRecoverPasswordEmail(
+        correlationId, userId, userPassword.rec_code);
   }
 }
