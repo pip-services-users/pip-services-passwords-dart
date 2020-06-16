@@ -151,9 +151,8 @@ class PasswordsController
       err = NotFoundException(correlationId, 'USER_NOT_FOUND',
               'User ' + userId + ' was not found')
           .withDetails('user_id', userId);
+      _logger.trace(correlationId, 'Could not read user password %s', [err]);
     }
-
-    _logger.trace(correlationId, 'Could not read user password %s', [err]);
     return item;
   }
 
